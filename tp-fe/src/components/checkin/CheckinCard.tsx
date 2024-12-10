@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Link, Trash } from "lucide-react";
+import { Link, Trash, Pencil } from "lucide-react";
 import { ActionMenu } from "../shared/ActionMenu";
 import { ConfirmDialog } from "../shared/ConfirmDialog";
+import { EditCheckinDialog } from "./EditCheckinDialog";
 import { LazyLinkCard } from "./LazyLinkCard";
 import { Checkin } from "../../types";
 import { createApiClient } from "../../api/client";
@@ -23,6 +24,7 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
     onError,
 }) => {
     const [confirmOpen, setConfirmOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
     const api = createApiClient(token);
 
     const handleDelete = async () => {
@@ -36,6 +38,11 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
     };
 
     const menuItems = [
+        {
+            label: "編集",
+            icon: <Pencil size={16} />,
+            onClick: () => setEditOpen(true),
+        },
         {
             label: "削除",
             icon: <Trash size={16} />,
@@ -94,6 +101,15 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
                 cancelLabel="キャンセル"
                 onConfirm={handleDelete}
                 variant="destructive"
+            />
+
+            <EditCheckinDialog
+                checkin={checkin}
+                token={token}
+                open={editOpen}
+                onOpenChange={setEditOpen}
+                onSuccess={onDelete} // 履歴を更新
+                onError={onError}
             />
         </>
     );

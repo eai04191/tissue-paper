@@ -78,6 +78,16 @@ class ApiClient {
         });
     }
 
+    async updateCheckin(
+        checkinId: number,
+        data: CreateCheckinPayload
+    ): Promise<Checkin> {
+        return this.request<Checkin>(`/v1/checkins/${checkinId}`, {
+            method: "PATCH",
+            body: JSON.stringify(data),
+        });
+    }
+
     async deleteCheckin(checkinId: number): Promise<void> {
         return this.request<void>(`/v1/checkins/${checkinId}`, {
             method: "DELETE",
