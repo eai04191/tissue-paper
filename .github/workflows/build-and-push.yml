@@ -1,0 +1,46 @@
+name: Build and Push Images
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  FE_IMAGE_NAME: ${{ github.repository }}-frontend
+  BE_IMAGE_NAME: ${{ github.repository }}-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./tp-fe
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.FE_IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.FE_IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Build Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./tp-be
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.BE_IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.BE_IMAGE_NAME }}:${{ github.sha }}
