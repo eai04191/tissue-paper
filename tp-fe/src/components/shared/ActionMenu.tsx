@@ -1,12 +1,13 @@
-import React from "react";
 import { MoreHorizontal } from "lucide-react";
+import React from "react";
+
+import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 
 export interface ActionMenuItem {
     label: string;

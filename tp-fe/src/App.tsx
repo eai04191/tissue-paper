@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+
+import { createApiClient } from "@/api/client";
 import { CheckinForm } from "@/components/checkin/CheckinForm";
 import { CheckinHistory } from "@/components/checkin/CheckinHistory";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createApiClient } from "@/api/client";
+import { Input } from "@/components/ui/input";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 const App: React.FC = () => {
     const [token, setToken] = useLocalStorage<string>("tissue-token", "");

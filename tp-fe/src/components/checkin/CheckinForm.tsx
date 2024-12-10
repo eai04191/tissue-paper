@@ -1,14 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
+import React, { useEffect, useRef,useState } from "react";
+
+import type { createApiClient } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckinFormNote } from "./CheckinFormNote";
-import { CheckinFormLink } from "./CheckinFormLink";
-import { CheckinFormTags } from "./CheckinFormTags";
-import { CheckinFormSettings } from "./CheckinFormSettings";
 import { useQueryParams } from "@/hooks/useQueryParams";
-import type { createApiClient } from "@/api/client";
 import { CreateCheckinPayload, LinkCard as LinkCardType } from "@/types";
+
+import { CheckinFormLink } from "./CheckinFormLink";
+import { CheckinFormNote } from "./CheckinFormNote";
+import { CheckinFormSettings } from "./CheckinFormSettings";
+import { CheckinFormTags } from "./CheckinFormTags";
 
 interface CheckinFormProps {
     api: ReturnType<typeof createApiClient>;

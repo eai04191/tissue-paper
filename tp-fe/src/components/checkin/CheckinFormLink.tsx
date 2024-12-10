@@ -1,7 +1,9 @@
 import React from "react";
+
 import { Input } from "@/components/ui/input";
-import { LinkCard } from "./LinkCard";
 import { LinkCard as LinkCardType } from "@/types";
+
+import { LinkCard } from "./LinkCard";
 
 interface CheckinFormLinkProps {
     value: string;

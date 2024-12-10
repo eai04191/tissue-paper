@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect,useState } from "react";
+
+import type { createApiClient } from "@/api/client";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import type { createApiClient } from "@/api/client";
 
 interface CheckinFormTagsProps {
     api: ReturnType<typeof createApiClient>;

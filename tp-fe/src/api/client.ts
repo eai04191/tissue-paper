@@ -1,9 +1,9 @@
 import {
-    User,
     Checkin,
     CreateCheckinPayload,
-    TagStats,
     LinkCard,
+    TagStats,
+    User,
 } from "../types";
 
 const API_BASE_URL = "http://localhost:3001/api";

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect,useState } from "react";
+
 import type { createApiClient } from "@/api/client";
-import { Checkin } from "@/types";
-import { CheckinCard } from "./CheckinCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkin } from "@/types";
+
+import { CheckinCard } from "./CheckinCard";
 
 interface CheckinHistoryProps {
     api: ReturnType<typeof createApiClient>;

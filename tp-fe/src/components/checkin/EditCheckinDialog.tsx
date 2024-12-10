@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
+
+import type { createApiClient } from "@/api/client";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Checkin, CreateCheckinPayload } from "@/types";
-import type { createApiClient } from "@/api/client";
-import { CheckinFormNote } from "./CheckinFormNote";
+
 import { CheckinFormLink } from "./CheckinFormLink";
-import { CheckinFormTags } from "./CheckinFormTags";
+import { CheckinFormNote } from "./CheckinFormNote";
 import { CheckinFormSettings } from "./CheckinFormSettings";
+import { CheckinFormTags } from "./CheckinFormTags";
 
 interface EditCheckinDialogProps {
     checkin: Checkin;
