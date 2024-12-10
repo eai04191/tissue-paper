@@ -21,8 +21,9 @@ const App: React.FC = () => {
     if (!token) {
         return (
             <div className="container mx-auto p-4">
-                <div className="max-w-md mx-auto">
-                    <h1 className="text-2xl font-bold mb-4">Login to Tissue</h1>
+                <div className="max-w-md mx-auto space-y-4">
+                    <h1 className="text-2xl font-bold">Tissue Paper</h1>
+                    <h2 className="text-xl font-bold mb-4">Login to Tissue</h2>
                     <div className="space-y-4">
                         <Input
                             type="password"
@@ -45,7 +46,7 @@ const App: React.FC = () => {
         <div className="container mx-auto p-4">
             <div className="max-w-2xl mx-auto">
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-bold">Tissue Checkin</h1>
+                    <h1 className="text-2xl font-bold">Tissue Paper</h1>
                     <Button
                         variant="outline"
                         onClick={() => {
