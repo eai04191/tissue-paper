@@ -10,6 +10,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
 class ApiClient {
     private token: string;
+    private user: { data: User; timestamp: number } | null = null;
+    private readonly CACHE_TTL = 1000 * 60 * 5; // 5分
 
     constructor(token: string) {
         this.token = token;
@@ -42,7 +44,14 @@ class ApiClient {
     }
 
     async getCurrentUser(): Promise<User> {
-        return (await this.request<User>("/v1/me")).data;
+        const now = Date.now();
+        if (this.user && now - this.user.timestamp < this.CACHE_TTL) {
+            return this.user.data;
+        }
+
+        const data = (await this.request<User>("/v1/me")).data;
+        this.user = { data, timestamp: now };
+        return data;
     }
 
     async getUserCheckins(
@@ -110,6 +119,10 @@ class ApiClient {
                 method: "DELETE",
             })
         ).data;
+    }
+
+    clearCache() {
+        this.user = null;
     }
 }
 
