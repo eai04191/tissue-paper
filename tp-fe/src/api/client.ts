@@ -33,18 +33,15 @@ class ApiClient {
             throw new Error(error.error?.message || "API request failed");
         }
 
+        if (options.method === "DELETE") {
+            return {} as T;
+        }
+
         return response.json();
     }
 
     async getCurrentUser(): Promise<User> {
         return this.request<User>("/v1/me");
-    }
-
-    async createCheckin(data: CreateCheckinPayload): Promise<Checkin> {
-        return this.request<Checkin>("/v1/checkins", {
-            method: "POST",
-            body: JSON.stringify(data),
-        });
     }
 
     async getUserCheckins(
@@ -72,6 +69,19 @@ class ApiClient {
             console.error("Failed to fetch link card:", error);
             return null;
         }
+    }
+
+    async createCheckin(data: CreateCheckinPayload): Promise<Checkin> {
+        return this.request<Checkin>("/v1/checkins", {
+            method: "POST",
+            body: JSON.stringify(data),
+        });
+    }
+
+    async deleteCheckin(checkinId: number): Promise<void> {
+        return this.request<void>(`/v1/checkins/${checkinId}`, {
+            method: "DELETE",
+        });
     }
 }
 
