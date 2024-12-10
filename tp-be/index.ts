@@ -12,11 +12,12 @@ const API_BASE_URL = "https://shikorism.net/api";
 const authenticateToken = (
     req: express.Request,
     res: express.Response,
-    next: express.Function,
+    next: express.NextFunction,
 ) => {
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
-        return res.status(401).json({ error: "Authorization header missing" });
+        res.status(401).json({ error: "Authorization header missing" });
+        return;
     }
     next();
 };
