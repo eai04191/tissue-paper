@@ -1,13 +1,26 @@
-// components/CheckinForm.tsx
 import React, { useState } from "react";
-import { TagSelector } from "./TagSelector";
+import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TagSelector } from "./TagSelector";
+import { createApiClient } from "../api/client";
+import { CreateCheckinPayload } from "../types";
 
-export const CheckinForm = ({ token, onError }) => {
-    const [formData, setFormData] = useState({
+interface CheckinFormProps {
+    token: string;
+    onError: (error: string) => void;
+    onSuccess: () => void;
+}
+
+export const CheckinForm: React.FC<CheckinFormProps> = ({
+    token,
+    onError,
+    onSuccess,
+}) => {
+    const [formData, setFormData] = useState<CreateCheckinPayload>({
         note: "",
         link: "",
         tags: [],
@@ -16,28 +29,23 @@ export const CheckinForm = ({ token, onError }) => {
         discard_elapsed_time: false,
     });
 
-    const handleSubmit = async (e) => {
+    const api = createApiClient(token);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await fetch(
-                "http://localhost:3001/api/v1/checkins",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify(formData),
-                }
-            );
+            await api.createCheckin(formData);
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(
-                    error.error?.message || "Failed to create checkin"
-                );
-            }
+            // Show confetti animation
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ["#ff0000", "#00ff00", "#0000ff"],
+                ticks: 200,
+            });
 
+            // Reset form
             setFormData({
                 note: "",
                 link: "",
@@ -46,119 +54,134 @@ export const CheckinForm = ({ token, onError }) => {
                 is_too_sensitive: false,
                 discard_elapsed_time: false,
             });
-            onError("");
+
+            onSuccess();
         } catch (error) {
-            onError(error.message);
+            onError(
+                error instanceof Error
+                    ? error.message
+                    : "Failed to create checkin"
+            );
         }
     };
 
-    const handleAddTag = (tag) => {
-        if (!formData.tags.includes(tag)) {
+    const handleAddTag = (tag: string) => {
+        if (!formData.tags?.includes(tag)) {
             setFormData((prev) => ({
                 ...prev,
-                tags: [...prev.tags, tag],
+                tags: [...(prev.tags || []), tag],
             }));
         }
     };
 
-    const handleRemoveTag = (tagToRemove) => {
+    const handleRemoveTag = (tagToRemove: string) => {
         setFormData((prev) => ({
             ...prev,
-            tags: prev.tags.filter((tag) => tag !== tagToRemove),
+            tags: prev.tags?.filter((tag) => tag !== tagToRemove) || [],
         }));
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-                <label className="block text-sm font-medium mb-2">Note</label>
-                <Textarea
-                    value={formData.note}
-                    onChange={(e) =>
-                        setFormData((prev) => ({
-                            ...prev,
-                            note: e.target.value,
-                        }))
-                    }
-                    className="w-full"
-                />
-            </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>New Checkin</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium mb-2">
+                            Note
+                        </label>
+                        <Textarea
+                            value={formData.note}
+                            onChange={(e) =>
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    note: e.target.value,
+                                }))
+                            }
+                            className="w-full"
+                            placeholder="How was it?"
+                        />
+                    </div>
 
-            <div>
-                <label className="block text-sm font-medium mb-2">Link</label>
-                <Input
-                    type="url"
-                    value={formData.link}
-                    onChange={(e) =>
-                        setFormData((prev) => ({
-                            ...prev,
-                            link: e.target.value,
-                        }))
-                    }
-                />
-            </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-2">
+                            Link
+                        </label>
+                        <Input
+                            type="url"
+                            value={formData.link}
+                            onChange={(e) =>
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    link: e.target.value,
+                                }))
+                            }
+                            placeholder="https://..."
+                        />
+                    </div>
 
-            <div>
-                <label className="block text-sm font-medium mb-2">Tags</label>
-                <div className="flex flex-wrap gap-2 mb-2">
-                    {formData.tags.map((tag) => (
-                        <Badge
-                            key={tag}
-                            variant="default"
-                            className="cursor-pointer"
-                            onClick={() => handleRemoveTag(tag)}
-                        >
-                            {tag} ×
-                        </Badge>
-                    ))}
-                </div>
-                <TagSelector token={token} onSelectTag={handleAddTag} />
-            </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-2">
+                            Tags
+                        </label>
+                        <TagSelector
+                            token={token}
+                            selectedTags={formData.tags || []}
+                            onAddTag={handleAddTag}
+                            onRemoveTag={handleRemoveTag}
+                        />
+                    </div>
 
-            <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                    <Switch
-                        checked={formData.is_private}
-                        onCheckedChange={(checked) =>
-                            setFormData((prev) => ({
-                                ...prev,
-                                is_private: checked,
-                            }))
-                        }
-                    />
-                    <label className="text-sm">Private</label>
-                </div>
+                    <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                            <Switch
+                                checked={formData.is_private}
+                                onCheckedChange={(checked) =>
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        is_private: checked,
+                                    }))
+                                }
+                            />
+                            <label className="text-sm">Private</label>
+                        </div>
 
-                <div className="flex items-center space-x-2">
-                    <Switch
-                        checked={formData.is_too_sensitive}
-                        onCheckedChange={(checked) =>
-                            setFormData((prev) => ({
-                                ...prev,
-                                is_too_sensitive: checked,
-                            }))
-                        }
-                    />
-                    <label className="text-sm">Too Sensitive</label>
-                </div>
+                        <div className="flex items-center space-x-2">
+                            <Switch
+                                checked={formData.is_too_sensitive}
+                                onCheckedChange={(checked) =>
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        is_too_sensitive: checked,
+                                    }))
+                                }
+                            />
+                            <label className="text-sm">Too Sensitive</label>
+                        </div>
 
-                <div className="flex items-center space-x-2">
-                    <Switch
-                        checked={formData.discard_elapsed_time}
-                        onCheckedChange={(checked) =>
-                            setFormData((prev) => ({
-                                ...prev,
-                                discard_elapsed_time: checked,
-                            }))
-                        }
-                    />
-                    <label className="text-sm">Discard Elapsed Time</label>
-                </div>
-            </div>
+                        <div className="flex items-center space-x-2">
+                            <Switch
+                                checked={formData.discard_elapsed_time}
+                                onCheckedChange={(checked) =>
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        discard_elapsed_time: checked,
+                                    }))
+                                }
+                            />
+                            <label className="text-sm">
+                                Discard Elapsed Time
+                            </label>
+                        </div>
+                    </div>
 
-            <Button type="submit" className="w-full">
-                Check In
-            </Button>
-        </form>
+                    <Button type="submit" className="w-full">
+                        Check In
+                    </Button>
+                </form>
+            </CardContent>
+        </Card>
     );
 };
