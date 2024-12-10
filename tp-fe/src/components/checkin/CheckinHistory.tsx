@@ -1,9 +1,11 @@
+import { formatDistance, formatDuration, intervalToDuration } from "date-fns";
 import React, { useEffect, useState } from "react";
 
 import type { createApiClient } from "@/api/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Checkin } from "@/types";
 
+import { TransitionText } from "../TransitionText";
 import { CheckinCard } from "./CheckinCard";
 
 interface CheckinHistoryProps {
@@ -42,6 +44,42 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
         fetchCheckins();
     };
 
+    const renderTimelineGroup = (checkins: Checkin[]) => {
+        const getElapsedTime = (current: Checkin, next: Checkin) => {
+            return formatDistance(
+                new Date(current.checked_in_at),
+                new Date(next.checked_in_at),
+            );
+        };
+
+        const getDetailedTime = (current: Checkin, next: Checkin) => {
+            const duration = intervalToDuration({
+                start: new Date(next.checked_in_at),
+                end: new Date(current.checked_in_at),
+            });
+
+            return formatDuration(duration);
+        };
+
+        return checkins.map((checkin, index) => (
+            <React.Fragment key={checkin.id}>
+                <CheckinCard
+                    checkin={checkin}
+                    api={api}
+                    onDelete={handleCheckinDelete}
+                    onError={onError}
+                />
+                {index < checkins.length - 1 && (
+                    <TransitionText
+                        className="text-sm text-gray-400 text-center"
+                        text1={getElapsedTime(checkin, checkins[index + 1])}
+                        text2={getDetailedTime(checkin, checkins[index + 1])}
+                    />
+                )}
+            </React.Fragment>
+        ));
+    };
+
     if (loading) {
         return (
             <div className="space-y-4">
@@ -69,16 +107,7 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
                 <h2>Checkins</h2>
                 <span className="text-2xl opacity-30">#{totalCheckins}</span>
             </div>
-
-            {checkins.map((checkin) => (
-                <CheckinCard
-                    key={checkin.id}
-                    checkin={checkin}
-                    api={api}
-                    onDelete={handleCheckinDelete}
-                    onError={onError}
-                />
-            ))}
+            {renderTimelineGroup(checkins)}
         </div>
     );
 };

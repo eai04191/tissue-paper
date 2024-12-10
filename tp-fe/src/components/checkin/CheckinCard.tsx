@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkin } from "@/types";
 
+import { TransitionText } from "../TransitionText";
 import { EditCheckinDialog } from "./EditCheckinDialog";
 import { LazyLinkCard } from "./LazyLinkCard";
 
@@ -58,18 +59,17 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
             <Card>
                 <CardHeader>
                     <div className="flex items-center justify-between">
-                        <span
-                            className="text-sm font-medium"
-                            title={new Date(
-                                checkin.checked_in_at,
-                            ).toLocaleString()}
-                        >
-                            {formatDistance(
+                        <TransitionText
+                            className="text-sm font-medium flex-1 justify-start text-start"
+                            text1={formatDistance(
                                 new Date(checkin.checked_in_at),
                                 new Date(),
                                 { addSuffix: true },
                             )}
-                        </span>
+                            text2={new Date(
+                                checkin.checked_in_at,
+                            ).toLocaleString()}
+                        />
                         <div className="flex items-center gap-2">
                             <Button
                                 variant="ghost"
