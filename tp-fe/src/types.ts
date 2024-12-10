@@ -57,7 +57,7 @@ export interface LinkCard {
     title: string;
     description: string;
     image: string;
-    tags: string[];
+    tags: { name: string }[];
 }
 
 // APIクライアントの戻り値の型

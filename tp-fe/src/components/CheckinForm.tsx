@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { TagSelector } from "./TagSelector";
+import { LinkCard } from "./LinkCard";
 import { createApiClient } from "../api/client";
-import { CreateCheckinPayload } from "../types";
+import { CreateCheckinPayload, LinkCard as LinkCardType } from "../types";
 
 interface CheckinFormProps {
     token: string;
@@ -29,23 +31,48 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
         discard_elapsed_time: false,
     });
 
+    const [linkCard, setLinkCard] = useState<LinkCardType | null>(null);
+    const linkPreviewTimeoutRef = useRef<NodeJS.Timeout>();
     const api = createApiClient(token);
+
+    useEffect(() => {
+        if (linkPreviewTimeoutRef.current) {
+            clearTimeout(linkPreviewTimeoutRef.current);
+        }
+
+        if (!formData.link) {
+            setLinkCard(null);
+            return;
+        }
+
+        // URLの入力から500ms後にカード情報を取得
+        linkPreviewTimeoutRef.current = setTimeout(async () => {
+            try {
+                const card = await api.getLinkCard(formData.link!);
+                setLinkCard(card);
+            } catch (error) {
+                console.error("Failed to fetch link card:", error);
+            }
+        }, 500);
+
+        return () => {
+            if (linkPreviewTimeoutRef.current) {
+                clearTimeout(linkPreviewTimeoutRef.current);
+            }
+        };
+    }, [formData.link]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             await api.createCheckin(formData);
 
-            // Show confetti animation
             confetti({
                 particleCount: 100,
                 spread: 70,
                 origin: { y: 0.6 },
-                colors: ["#ff0000", "#00ff00", "#0000ff"],
-                ticks: 200,
             });
 
-            // Reset form
             setFormData({
                 note: "",
                 link: "",
@@ -54,6 +81,7 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
                 is_too_sensitive: false,
                 discard_elapsed_time: false,
             });
+            setLinkCard(null);
 
             onSuccess();
         } catch (error) {
@@ -80,6 +108,12 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
             tags: prev.tags?.filter((tag) => tag !== tagToRemove) || [],
         }));
     };
+
+    // 未使用のサジェストタグを取得
+    const unusedSuggestedTags =
+        linkCard?.tags
+            ?.map((tag) => tag.name)
+            .filter((tagName) => !formData.tags?.includes(tagName)) || [];
 
     return (
         <Card>
@@ -122,6 +156,12 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
                         />
                     </div>
 
+                    {linkCard && (
+                        <div className="mt-2">
+                            <LinkCard card={linkCard} />
+                        </div>
+                    )}
+
                     <div>
                         <label className="block text-sm font-medium mb-2">
                             Tags
@@ -132,6 +172,26 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
                             onAddTag={handleAddTag}
                             onRemoveTag={handleRemoveTag}
                         />
+
+                        {unusedSuggestedTags.length > 0 && (
+                            <div className="mt-4">
+                                <label className="block text-sm font-medium mb-2 text-gray-600">
+                                    Suggested Tags from URL
+                                </label>
+                                <div className="flex flex-wrap gap-2">
+                                    {unusedSuggestedTags.map((tag) => (
+                                        <Badge
+                                            key={tag}
+                                            variant="outline"
+                                            className="cursor-pointer hover:bg-gray-100 text-gray-600"
+                                            onClick={() => handleAddTag(tag)}
+                                        >
+                                            + {tag}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="space-y-2">
