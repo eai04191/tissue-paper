@@ -57,7 +57,7 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
     return (
         <>
             <Card>
-                <CardHeader>
+                <CardHeader className="pb-3.5">
                     <div className="flex items-center justify-between">
                         <TransitionText
                             className="text-sm font-medium flex-1 justify-start text-start"
@@ -88,7 +88,7 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-4">
                     {checkin.note && (
                         <p className="text-gray-600">{checkin.note}</p>
                     )}
