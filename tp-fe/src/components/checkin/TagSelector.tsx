@@ -30,11 +30,9 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                 const statsTagSet = new Set(tagStats.map((stat) => stat.name));
 
                 // 直近のチェックインからタグを取得 (最新20件)
-                const recentCheckins = await api.getUserCheckins(
-                    user.name,
-                    1,
-                    20,
-                );
+                const recentCheckins = (
+                    await api.getUserCheckins(user.name, 1, 20)
+                ).data;
                 const recentTagSet = new Set(
                     recentCheckins.flatMap((checkin) => checkin.tags || []),
                 );

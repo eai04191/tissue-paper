@@ -39,7 +39,17 @@ app.use(
                 params: req.query,
             });
 
-            res.status(response.status).json(response.data);
+            // X-で始まるヘッダーを公開
+            const exposedHeaders = Object.keys(response.headers)
+                .filter((key) => key.startsWith("x-"))
+                .join(", ");
+            if (exposedHeaders) {
+                res.setHeader("Access-Control-Expose-Headers", exposedHeaders);
+            }
+
+            res.status(response.status)
+                .header(response.headers)
+                .json(response.data);
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 res.status(error.response.status).json(error.response.data);

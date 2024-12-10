@@ -18,7 +18,7 @@ class ApiClient {
     private async request<T>(
         endpoint: string,
         options: RequestInit = {},
-    ): Promise<T> {
+    ): Promise<{ data: T; response: Response }> {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
             headers: {
@@ -34,32 +34,40 @@ class ApiClient {
         }
 
         if (options.method === "DELETE") {
-            return {} as T;
+            return { response } as { data: T; response: Response };
         }
 
-        return response.json();
+        const data = await response.json();
+        return { data, response };
     }
 
     async getCurrentUser(): Promise<User> {
-        return this.request<User>("/v1/me");
+        return (await this.request<User>("/v1/me")).data;
     }
 
     async getUserCheckins(
         username: string,
         page: number = 1,
         perPage: number = 20,
-    ): Promise<Checkin[]> {
+    ): Promise<{ data: Checkin[]; totalCount: number }> {
         if (perPage > 100 || perPage < 10) {
             throw new Error("perPage must be between 10 and 100");
         }
 
-        return this.request<Checkin[]>(
+        const result = await this.request<Checkin[]>(
             `/v1/users/${username}/checkins?page=${page}&per_page=${perPage}`,
         );
+
+        return {
+            data: result.data,
+            totalCount: Number(result.response.headers.get("X-Total-Count")),
+        };
     }
 
     async getUserTagStats(username: string): Promise<TagStats[]> {
-        return this.request<TagStats[]>(`/v1/users/${username}/stats/tags`);
+        return (
+            await this.request<TagStats[]>(`/v1/users/${username}/stats/tags`)
+        ).data;
     }
 
     async getLinkCard(url: string): Promise<LinkCard | null> {
@@ -68,7 +76,7 @@ class ApiClient {
             const response = await this.request<LinkCard>(
                 `/checkin/card?url=${encodedUrl}`,
             );
-            return response;
+            return response.data;
         } catch (error) {
             console.error("Failed to fetch link card:", error);
             return null;
@@ -76,26 +84,32 @@ class ApiClient {
     }
 
     async createCheckin(data: CreateCheckinPayload): Promise<Checkin> {
-        return this.request<Checkin>("/v1/checkins", {
-            method: "POST",
-            body: JSON.stringify(data),
-        });
+        return (
+            await this.request<Checkin>("/v1/checkins", {
+                method: "POST",
+                body: JSON.stringify(data),
+            })
+        ).data;
     }
 
     async updateCheckin(
         checkinId: number,
         data: CreateCheckinPayload,
     ): Promise<Checkin> {
-        return this.request<Checkin>(`/v1/checkins/${checkinId}`, {
-            method: "PATCH",
-            body: JSON.stringify(data),
-        });
+        return (
+            await this.request<Checkin>(`/v1/checkins/${checkinId}`, {
+                method: "PATCH",
+                body: JSON.stringify(data),
+            })
+        ).data;
     }
 
     async deleteCheckin(checkinId: number): Promise<void> {
-        return this.request<void>(`/v1/checkins/${checkinId}`, {
-            method: "DELETE",
-        });
+        return (
+            await this.request<void>(`/v1/checkins/${checkinId}`, {
+                method: "DELETE",
+            })
+        ).data;
     }
 }
 

@@ -16,6 +16,7 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
     onError,
 }) => {
     const [checkins, setCheckins] = useState<Checkin[]>([]);
+    const [totalCheckins, setTotalCheckins] = useState(0);
     const [loading, setLoading] = useState(false);
 
     const fetchCheckins = async () => {
@@ -23,7 +24,8 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
         try {
             const user = await api.getCurrentUser();
             const userCheckins = await api.getUserCheckins(user.name);
-            setCheckins(userCheckins);
+            setCheckins(userCheckins.data);
+            setTotalCheckins(userCheckins.totalCount);
         } catch (error) {
             onError("Failed to fetch checkin history");
             console.error("Failed to fetch checkins:", error);
@@ -63,7 +65,11 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
 
     return (
         <div className="space-y-4">
-            <h2 className="text-xl font-bold">Recent Checkins</h2>
+            <div className="flex justify-between items-center text-xl font-bold">
+                <h2>Checkins</h2>
+                <span className="text-2xl opacity-30">#{totalCheckins}</span>
+            </div>
+
             {checkins.map((checkin) => (
                 <CheckinCard
                     key={checkin.id}

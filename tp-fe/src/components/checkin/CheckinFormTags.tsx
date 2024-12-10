@@ -33,7 +33,8 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
                 const statsTagSet = new Set(tagStats.map((stat) => stat.name));
 
                 // 直近のチェックインからタグを取得 (最新20件)
-                const recentCheckins = await api.getUserCheckins(user.name);
+                const recentCheckins = (await api.getUserCheckins(user.name))
+                    .data;
                 const recentTagSet = new Set(
                     recentCheckins.flatMap((checkin) => checkin.tags || []),
                 );
