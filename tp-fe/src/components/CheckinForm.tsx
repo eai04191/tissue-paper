@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { TagSelector } from "./TagSelector";
 import { LinkCard } from "./LinkCard";
 import { createApiClient } from "../api/client";
+import { useQueryParams } from "../hooks/useQueryParams";
 import { CreateCheckinPayload, LinkCard as LinkCardType } from "../types";
 
 interface CheckinFormProps {
@@ -22,10 +23,12 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
     onError,
     onSuccess,
 }) => {
+    const queryParams = useQueryParams();
+
     const [formData, setFormData] = useState<CreateCheckinPayload>({
-        note: "",
-        link: "",
-        tags: [],
+        note: queryParams.note,
+        link: queryParams.link,
+        tags: queryParams.tags,
         is_private: false,
         is_too_sensitive: false,
         discard_elapsed_time: false,
@@ -33,8 +36,18 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
 
     const [linkCard, setLinkCard] = useState<LinkCardType | null>(null);
     const linkPreviewTimeoutRef = useRef<NodeJS.Timeout>();
+    const initialFetchRef = useRef(false);
     const api = createApiClient(token);
 
+    // クエリパラメータのリンクがある場合は初回のみカード情報を取得
+    useEffect(() => {
+        if (formData.link && !initialFetchRef.current) {
+            initialFetchRef.current = true;
+            fetchLinkCard(formData.link);
+        }
+    }, []);
+
+    // リンク入力時のカード情報取得
     useEffect(() => {
         if (linkPreviewTimeoutRef.current) {
             clearTimeout(linkPreviewTimeoutRef.current);
@@ -45,14 +58,8 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
             return;
         }
 
-        // URLの入力から500ms後にカード情報を取得
-        linkPreviewTimeoutRef.current = setTimeout(async () => {
-            try {
-                const card = await api.getLinkCard(formData.link!);
-                setLinkCard(card);
-            } catch (error) {
-                console.error("Failed to fetch link card:", error);
-            }
+        linkPreviewTimeoutRef.current = setTimeout(() => {
+            fetchLinkCard(formData.link!);
         }, 500);
 
         return () => {
@@ -61,6 +68,15 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
             }
         };
     }, [formData.link]);
+
+    const fetchLinkCard = async (url: string) => {
+        try {
+            const card = await api.getLinkCard(url);
+            setLinkCard(card);
+        } catch (error) {
+            console.error("Failed to fetch link card:", error);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -72,6 +88,9 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
                 spread: 70,
                 origin: { y: 0.6 },
             });
+
+            // フォームクリア後、URLからクエリパラメータを削除
+            window.history.replaceState(null, "", window.location.pathname);
 
             setFormData({
                 note: "",
