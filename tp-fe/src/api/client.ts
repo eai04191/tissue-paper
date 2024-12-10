@@ -49,6 +49,10 @@ class ApiClient {
         page: number = 1,
         perPage: number = 20,
     ): Promise<Checkin[]> {
+        if (perPage > 100 || perPage < 10) {
+            throw new Error("perPage must be between 10 and 100");
+        }
+
         return this.request<Checkin[]>(
             `/v1/users/${username}/checkins?page=${page}&per_page=${perPage}`,
         );
