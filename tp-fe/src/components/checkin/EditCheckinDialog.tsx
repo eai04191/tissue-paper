@@ -6,8 +6,8 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Checkin, CreateCheckinPayload } from "../../types";
-import { createApiClient } from "../../api/client";
+import { Checkin, CreateCheckinPayload } from "@/types";
+import type { createApiClient } from "@/api/client";
 import { CheckinFormNote } from "./CheckinFormNote";
 import { CheckinFormLink } from "./CheckinFormLink";
 import { CheckinFormTags } from "./CheckinFormTags";
@@ -15,7 +15,7 @@ import { CheckinFormSettings } from "./CheckinFormSettings";
 
 interface EditCheckinDialogProps {
     checkin: Checkin;
-    token: string;
+    api: ReturnType<typeof createApiClient>;
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onSuccess: () => void;
@@ -24,7 +24,7 @@ interface EditCheckinDialogProps {
 
 export const EditCheckinDialog: React.FC<EditCheckinDialogProps> = ({
     checkin,
-    token,
+    api,
     open,
     onOpenChange,
     onSuccess,
@@ -40,12 +40,11 @@ export const EditCheckinDialog: React.FC<EditCheckinDialogProps> = ({
     });
 
     const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
-    const api = createApiClient(token);
 
     // リンクが変更された時にカード情報を取得
     useEffect(() => {
         const fetchLinkCard = async () => {
-            if (!formData.link) {
+            if (!open || !formData.link) {
                 setSuggestedTags([]);
                 return;
             }
@@ -62,7 +61,7 @@ export const EditCheckinDialog: React.FC<EditCheckinDialogProps> = ({
         };
 
         fetchLinkCard();
-    }, [formData.link]);
+    }, [formData.link, open, api]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -106,7 +105,7 @@ export const EditCheckinDialog: React.FC<EditCheckinDialogProps> = ({
                             Tags
                         </label>
                         <CheckinFormTags
-                            token={token}
+                            api={api}
                             selectedTags={formData.tags || []}
                             suggestedTags={suggestedTags}
                             onAddTag={(tag) =>

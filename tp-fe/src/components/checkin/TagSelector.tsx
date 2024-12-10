@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { createApiClient } from "../../api/client";
+import type { createApiClient } from "@/api/client";
 
 interface TagSelectorProps {
-    token: string;
+    api: ReturnType<typeof createApiClient>;
     selectedTags: string[];
     onAddTag: (tag: string) => void;
     onRemoveTag: (tag: string) => void;
 }
 
 export const TagSelector: React.FC<TagSelectorProps> = ({
-    token,
+    api,
     selectedTags,
     onAddTag,
     onRemoveTag,
 }) => {
     const [recentTags, setRecentTags] = useState<string[]>([]);
     const [newTag, setNewTag] = useState("");
-    const api = createApiClient(token);
 
     useEffect(() => {
         const fetchTags = async () => {
@@ -51,7 +50,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         };
 
         fetchTags();
-    }, [token]);
+    }, [api]);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter") {

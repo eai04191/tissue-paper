@@ -6,18 +6,18 @@ import { CheckinFormNote } from "./CheckinFormNote";
 import { CheckinFormLink } from "./CheckinFormLink";
 import { CheckinFormTags } from "./CheckinFormTags";
 import { CheckinFormSettings } from "./CheckinFormSettings";
-import { useQueryParams } from "../../hooks/useQueryParams";
-import { createApiClient } from "../../api/client";
-import { CreateCheckinPayload, LinkCard as LinkCardType } from "../../types";
+import { useQueryParams } from "@/hooks/useQueryParams";
+import type { createApiClient } from "@/api/client";
+import { CreateCheckinPayload, LinkCard as LinkCardType } from "@/types";
 
 interface CheckinFormProps {
-    token: string;
+    api: ReturnType<typeof createApiClient>;
     onError: (error: string) => void;
     onSuccess: () => void;
 }
 
 export const CheckinForm: React.FC<CheckinFormProps> = ({
-    token,
+    api,
     onError,
     onSuccess,
 }) => {
@@ -36,7 +36,6 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
     const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
     const linkPreviewTimeoutRef = useRef<NodeJS.Timeout>();
     const initialFetchRef = useRef(false);
-    const api = createApiClient(token);
 
     // クエリパラメータのリンクがある場合は初回のみカード情報を取得
     useEffect(() => {
@@ -146,7 +145,7 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
                             Tags
                         </label>
                         <CheckinFormTags
-                            token={token}
+                            api={api}
                             selectedTags={formData.tags || []}
                             suggestedTags={suggestedTags}
                             onAddTag={(tag) =>

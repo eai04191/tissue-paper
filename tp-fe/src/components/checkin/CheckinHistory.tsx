@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { createApiClient } from "../../api/client";
-import { Checkin } from "../../types";
+import type { createApiClient } from "@/api/client";
+import { Checkin } from "@/types";
 import { CheckinCard } from "./CheckinCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface CheckinHistoryProps {
-    token: string;
+    api: ReturnType<typeof createApiClient>;
     onError: (error: string) => void;
-    refreshTrigger: number;
 }
 
 export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
-    token,
+    api,
     onError,
-    refreshTrigger,
 }) => {
     const [checkins, setCheckins] = useState<Checkin[]>([]);
     const [loading, setLoading] = useState(false);
-    const api = createApiClient(token);
 
     const fetchCheckins = async () => {
         setLoading(true);
@@ -35,7 +32,7 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
 
     useEffect(() => {
         fetchCheckins();
-    }, [token, refreshTrigger]);
+    }, []);
 
     const handleCheckinDelete = () => {
         fetchCheckins();
@@ -69,7 +66,7 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
                 <CheckinCard
                     key={checkin.id}
                     checkin={checkin}
-                    token={token}
+                    api={api}
                     onDelete={handleCheckinDelete}
                     onError={onError}
                 />

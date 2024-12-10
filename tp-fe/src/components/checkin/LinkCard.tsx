@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { LinkCard as LinkCardType } from "../../types";
+import { LinkCard as LinkCardType } from "@/types";
 
 interface LinkCardProps {
     card: LinkCardType;

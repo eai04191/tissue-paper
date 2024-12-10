@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import { useLocalStorage } from "./hooks/useLocalStorage";
-import { CheckinForm } from "./components/checkin/CheckinForm";
-import { CheckinHistory } from "./components/checkin/CheckinHistory";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { CheckinForm } from "@/components/checkin/CheckinForm";
+import { CheckinHistory } from "@/components/checkin/CheckinHistory";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { createApiClient } from "@/api/client";
 
 const App: React.FC = () => {
     const [token, setToken] = useLocalStorage<string>("tissue-token", "");
     const [error, setError] = useState<string>("");
-    const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [refreshTrigger, setRefreshTrigger] = useState(new Date().getTime());
 
     const handleCheckinSuccess = () => {
         setError("");
-        setRefreshTrigger((prev) => prev + 1);
+        setRefreshTrigger(new Date().getTime());
     };
 
     if (!token) {
@@ -36,6 +37,8 @@ const App: React.FC = () => {
             </div>
         );
     }
+
+    const api = createApiClient(token);
 
     return (
         <div className="container mx-auto p-4">
@@ -61,15 +64,15 @@ const App: React.FC = () => {
 
                 <div className="space-y-8">
                     <CheckinForm
-                        token={token}
+                        api={api}
                         onError={setError}
                         onSuccess={handleCheckinSuccess}
                     />
 
                     <CheckinHistory
-                        token={token}
+                        key={refreshTrigger}
+                        api={api}
                         onError={setError}
-                        refreshTrigger={refreshTrigger}
                     />
                 </div>
             </div>

@@ -3,29 +3,28 @@ import { format } from "date-fns";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link, Trash, Pencil } from "lucide-react";
-import { ActionMenu } from "../shared/ActionMenu";
-import { ConfirmDialog } from "../shared/ConfirmDialog";
+import { ActionMenu } from "@/components/shared/ActionMenu";
+import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { EditCheckinDialog } from "./EditCheckinDialog";
 import { LazyLinkCard } from "./LazyLinkCard";
-import { Checkin } from "../../types";
-import { createApiClient } from "../../api/client";
+import { Checkin } from "@/types";
+import type { createApiClient } from "@/api/client";
 
 interface CheckinCardProps {
     checkin: Checkin;
-    token: string;
+    api: ReturnType<typeof createApiClient>;
     onDelete: () => void;
     onError: (error: string) => void;
 }
 
 export const CheckinCard: React.FC<CheckinCardProps> = ({
     checkin,
-    token,
+    api,
     onDelete,
     onError,
 }) => {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
-    const api = createApiClient(token);
 
     const handleDelete = async () => {
         try {
@@ -78,7 +77,7 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
                         <p className="text-gray-600">{checkin.note}</p>
                     )}
                     {checkin.link && (
-                        <LazyLinkCard url={checkin.link} token={token} />
+                        <LazyLinkCard url={checkin.link} api={api} />
                     )}
                     {checkin.tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
@@ -105,7 +104,7 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
 
             <EditCheckinDialog
                 checkin={checkin}
-                token={token}
+                api={api}
                 open={editOpen}
                 onOpenChange={setEditOpen}
                 onSuccess={onDelete} // 履歴を更新

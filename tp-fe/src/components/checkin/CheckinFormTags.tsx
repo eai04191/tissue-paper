@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { createApiClient } from "../../api/client";
+import type { createApiClient } from "@/api/client";
 
 interface CheckinFormTagsProps {
-    token: string;
+    api: ReturnType<typeof createApiClient>;
     selectedTags: string[];
     suggestedTags: string[];
     onAddTag: (tag: string) => void;
@@ -12,7 +12,7 @@ interface CheckinFormTagsProps {
 }
 
 export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
-    token,
+    api,
     selectedTags,
     suggestedTags,
     onAddTag,
@@ -20,7 +20,6 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
 }) => {
     const [newTag, setNewTag] = useState("");
     const [recentTags, setRecentTags] = useState<string[]>([]);
-    const api = createApiClient(token);
 
     // 直近使用したタグを取得
     useEffect(() => {
@@ -46,7 +45,7 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
         };
 
         fetchTags();
-    }, [token]);
+    }, [api]);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter") {

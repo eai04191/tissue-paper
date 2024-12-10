@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LinkCard } from "./LinkCard";
-import { createApiClient } from "../../api/client";
-import { LinkCard as LinkCardType } from "../../types";
+import type { createApiClient } from "@/api/client";
+import { LinkCard as LinkCardType } from "@/types";
 
 interface LazyLinkCardProps {
     url: string;
-    token: string;
+    api: ReturnType<typeof createApiClient>;
 }
 
-export const LazyLinkCard: React.FC<LazyLinkCardProps> = ({ url, token }) => {
+export const LazyLinkCard: React.FC<LazyLinkCardProps> = ({ url, api }) => {
     const [card, setCard] = useState<LinkCardType | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
@@ -45,7 +45,6 @@ export const LazyLinkCard: React.FC<LazyLinkCardProps> = ({ url, token }) => {
     const fetchCard = async () => {
         setLoading(true);
         try {
-            const api = createApiClient(token);
             const data = await api.getLinkCard(url);
             if (data) {
                 setCard(data);
