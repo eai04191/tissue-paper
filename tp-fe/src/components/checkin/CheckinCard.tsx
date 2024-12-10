@@ -14,6 +14,15 @@ import { TransitionText } from "../TransitionText";
 import { EditCheckinDialog } from "./EditCheckinDialog";
 import { LazyLinkCard } from "./LazyLinkCard";
 
+// 時間帯に応じた絵文字を返す関数を追加
+const getTimeEmoji = (date: Date) => {
+    const hour = date.getHours();
+    if (hour >= 5 && hour < 12) return "🌅"; // 朝
+    if (hour >= 12 && hour < 16) return "☀️"; // 昼
+    if (hour >= 16 && hour < 19) return "🌇"; // 夕方
+    return "🌙"; // 夜
+};
+
 interface CheckinCardProps {
     checkin: Checkin;
     api: ReturnType<typeof createApiClient>;
@@ -66,9 +75,18 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
                                 new Date(),
                                 { addSuffix: true },
                             )}
-                            text2={new Date(
-                                checkin.checked_in_at,
-                            ).toLocaleString()}
+                            text2={
+                                <>
+                                    <span className="font-emoji">
+                                        {getTimeEmoji(
+                                            new Date(checkin.checked_in_at),
+                                        )}
+                                    </span>{" "}
+                                    {new Date(
+                                        checkin.checked_in_at,
+                                    ).toLocaleString()}
+                                </>
+                            }
                         />
                         <div className="flex items-center gap-2">
                             <Button

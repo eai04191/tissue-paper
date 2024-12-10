@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 
 export const TransitionText: React.FC<
     {
-        text1: string;
-        text2: string;
+        text1: React.ReactNode;
+        text2: React.ReactNode;
     } & HTMLMotionProps<"div">
 > = ({ text1, text2, ...props }) => {
     const moveAmount = "50px";

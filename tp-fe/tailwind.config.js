@@ -51,6 +51,14 @@ export default {
                     5: "hsl(var(--chart-5))",
                 },
             },
+            fontFamily: {
+                emoji: [
+                    "Apple Color Emoji",
+                    "Segoe UI Emoji",
+                    "Segoe UI Symbol",
+                    "Noto Color Emoji",
+                ],
+            },
         },
     },
     plugins: [require("tailwindcss-animate")],
