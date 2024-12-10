@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 import type { createApiClient } from "@/api/client";
-import { Badge } from "@/components/ui/badge";
+import { badgeVariants } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface CheckinFormTagsProps {
     api: ReturnType<typeof createApiClient>;
@@ -69,27 +70,32 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
 
     return (
         <div className="space-y-4">
-            <div className="flex flex-wrap gap-2">
-                {selectedTags.map((tag) => (
-                    <Badge
-                        key={tag}
-                        variant="default"
-                        className="cursor-pointer"
-                        onClick={() => onRemoveTag(tag)}
-                    >
-                        {tag} ×
-                    </Badge>
-                ))}
-            </div>
+            <div className="space-y-3">
+                {selectedTags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                        {selectedTags.map((tag) => (
+                            <button
+                                key={tag}
+                                className={badgeVariants({
+                                    variant: "default",
+                                })}
+                                onClick={() => onRemoveTag(tag)}
+                            >
+                                {tag} ×
+                            </button>
+                        ))}
+                    </div>
+                )}
 
-            <Input
-                type="text"
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="Add new tag... (press Enter to add)"
-                className="flex-1"
-            />
+                <Input
+                    type="text"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Add new tag... (press Enter to add)"
+                    className="flex-1"
+                />
+            </div>
 
             {unusedRecentTags.length > 0 && (
                 <div>
@@ -98,14 +104,16 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
                     </label>
                     <div className="flex flex-wrap gap-2">
                         {unusedRecentTags.map((tag) => (
-                            <Badge
+                            <button
                                 key={tag}
-                                variant="secondary"
-                                className="cursor-pointer hover:bg-gray-100"
+                                className={cn(
+                                    badgeVariants({ variant: "secondary" }),
+                                    "hover:bg-gray-100",
+                                )}
                                 onClick={() => onAddTag(tag)}
                             >
                                 {tag}
-                            </Badge>
+                            </button>
                         ))}
                     </div>
                 </div>
@@ -113,19 +121,21 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
 
             {unusedSuggestedTags.length > 0 && (
                 <div>
-                    <label className="block text-sm font-medium mb-2 text-gray-600">
+                    <label className="block text-sm font-medium mb-2">
                         Suggested Tags from URL
                     </label>
                     <div className="flex flex-wrap gap-2">
                         {unusedSuggestedTags.map((tag) => (
-                            <Badge
+                            <button
                                 key={tag}
-                                variant="outline"
-                                className="cursor-pointer hover:bg-gray-100 text-gray-600"
+                                className={cn(
+                                    badgeVariants({ variant: "outline" }),
+                                    "hover:bg-gray-100 text-gray-600",
+                                )}
                                 onClick={() => onAddTag(tag)}
                             >
                                 + {tag}
-                            </Badge>
+                            </button>
                         ))}
                     </div>
                 </div>
