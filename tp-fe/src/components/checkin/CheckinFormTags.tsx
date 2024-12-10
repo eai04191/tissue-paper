@@ -33,20 +33,12 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
                 const statsTagSet = new Set(tagStats.map((stat) => stat.name));
 
                 // 直近のチェックインからタグを取得 (最新20件)
-                const recentCheckins = await api.getUserCheckins(
-                    user.name,
-                    1,
-                    20,
-                );
+                const recentCheckins = await api.getUserCheckins(user.name);
                 const recentTagSet = new Set(
                     recentCheckins.flatMap((checkin) => checkin.tags || []),
                 );
 
-                // 両方のタグをマージして重複を排除
-                const allTags = Array.from(
-                    new Set([...statsTagSet, ...recentTagSet]),
-                ).sort((a, b) => a.localeCompare(b, "ja")); // 日本語対応のソート
-
+                const allTags = [...new Set([...statsTagSet, ...recentTagSet])];
                 setRecentTags(allTags);
             } catch (error) {
                 console.error("Failed to fetch tags:", error);
