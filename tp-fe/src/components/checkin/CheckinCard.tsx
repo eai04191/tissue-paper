@@ -1,5 +1,5 @@
-import { format } from "date-fns";
-import { Link, Pencil,Trash } from "lucide-react";
+import { formatDistance } from "date-fns";
+import { Link, Pencil, Trash } from "lucide-react";
 import React, { useState } from "react";
 
 import type { createApiClient } from "@/api/client";
@@ -57,8 +57,17 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
             <Card>
                 <CardHeader>
                     <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">
-                            {format(new Date(checkin.checked_in_at), "PPpp")}
+                        <span
+                            className="text-sm font-medium"
+                            title={new Date(
+                                checkin.checked_in_at,
+                            ).toLocaleString()}
+                        >
+                            {formatDistance(
+                                new Date(checkin.checked_in_at),
+                                new Date(),
+                                { addSuffix: true },
+                            )}
                         </span>
                         <div className="flex items-center gap-2">
                             <a
