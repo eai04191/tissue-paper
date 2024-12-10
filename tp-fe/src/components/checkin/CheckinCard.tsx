@@ -89,9 +89,6 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
                     </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {checkin.note && (
-                        <p className="text-gray-600">{checkin.note}</p>
-                    )}
                     {checkin.link && (
                         <LazyLinkCard url={checkin.link} api={api} />
                     )}
@@ -103,6 +100,9 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
                                 </Badge>
                             ))}
                         </div>
+                    )}
+                    {checkin.note && (
+                        <p className="text-gray-600">{checkin.note}</p>
                     )}
                 </CardContent>
             </Card>

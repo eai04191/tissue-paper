@@ -87,13 +87,6 @@ export const EditCheckinDialog: React.FC<EditCheckinDialogProps> = ({
                     <DialogTitle>Edit Checkin</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <CheckinFormNote
-                        value={formData.note || ""}
-                        onChange={(note) =>
-                            setFormData((prev) => ({ ...prev, note }))
-                        }
-                    />
-
                     <CheckinFormLink
                         value={formData.link || ""}
                         linkCard={null} // 編集画面ではプレビューを省略
@@ -126,6 +119,13 @@ export const EditCheckinDialog: React.FC<EditCheckinDialogProps> = ({
                             }
                         />
                     </div>
+
+                    <CheckinFormNote
+                        value={formData.note || ""}
+                        onChange={(note) =>
+                            setFormData((prev) => ({ ...prev, note }))
+                        }
+                    />
 
                     <CheckinFormSettings
                         isPrivate={formData.is_private || false}

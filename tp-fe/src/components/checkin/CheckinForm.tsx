@@ -127,13 +127,6 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <CheckinFormNote
-                        value={formData.note || ""}
-                        onChange={(note) =>
-                            setFormData((prev) => ({ ...prev, note }))
-                        }
-                    />
-
                     <CheckinFormLink
                         value={formData.link || ""}
                         linkCard={linkCard}
@@ -166,6 +159,13 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
                             }
                         />
                     </div>
+
+                    <CheckinFormNote
+                        value={formData.note || ""}
+                        onChange={(note) =>
+                            setFormData((prev) => ({ ...prev, note }))
+                        }
+                    />
 
                     <CheckinFormSettings
                         isPrivate={formData.is_private || false}
