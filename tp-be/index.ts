@@ -12,7 +12,7 @@ const API_BASE_URL = "https://shikorism.net/api";
 const authenticateToken = (
     req: express.Request,
     res: express.Response,
-    next: express.Function
+    next: express.Function,
 ) => {
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
@@ -46,7 +46,7 @@ app.use(
                 res.status(500).json({ error: "Internal server error" });
             }
         }
-    }
+    },
 );
 
 const PORT = process.env.PORT || 3001;
