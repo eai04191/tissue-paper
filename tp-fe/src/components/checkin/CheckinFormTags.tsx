@@ -36,15 +36,15 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
                 const recentCheckins = await api.getUserCheckins(
                     user.name,
                     1,
-                    20
+                    20,
                 );
                 const recentTagSet = new Set(
-                    recentCheckins.flatMap((checkin) => checkin.tags || [])
+                    recentCheckins.flatMap((checkin) => checkin.tags || []),
                 );
 
                 // 両方のタグをマージして重複を排除
                 const allTags = Array.from(
-                    new Set([...statsTagSet, ...recentTagSet])
+                    new Set([...statsTagSet, ...recentTagSet]),
                 ).sort((a, b) => a.localeCompare(b, "ja")); // 日本語対応のソート
 
                 setRecentTags(allTags);
@@ -68,10 +68,10 @@ export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
 
     // 選択済みのタグを除外したサジェストタグとRecentタグ
     const unusedSuggestedTags = suggestedTags.filter(
-        (tag) => !selectedTags.includes(tag)
+        (tag) => !selectedTags.includes(tag),
     );
     const unusedRecentTags = recentTags.filter(
-        (tag) => !selectedTags.includes(tag)
+        (tag) => !selectedTags.includes(tag),
     );
 
     return (

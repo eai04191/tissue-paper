@@ -17,7 +17,7 @@ class ApiClient {
 
     private async request<T>(
         endpoint: string,
-        options: RequestInit = {}
+        options: RequestInit = {},
     ): Promise<T> {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             ...options,
@@ -47,10 +47,10 @@ class ApiClient {
     async getUserCheckins(
         username: string,
         page: number = 1,
-        perPage: number = 20
+        perPage: number = 20,
     ): Promise<Checkin[]> {
         return this.request<Checkin[]>(
-            `/v1/users/${username}/checkins?page=${page}&per_page=${perPage}`
+            `/v1/users/${username}/checkins?page=${page}&per_page=${perPage}`,
         );
     }
 
@@ -62,7 +62,7 @@ class ApiClient {
         try {
             const encodedUrl = encodeURIComponent(url);
             const response = await this.request<LinkCard>(
-                `/checkin/card?url=${encodedUrl}`
+                `/checkin/card?url=${encodedUrl}`,
             );
             return response;
         } catch (error) {
@@ -80,7 +80,7 @@ class ApiClient {
 
     async updateCheckin(
         checkinId: number,
-        data: CreateCheckinPayload
+        data: CreateCheckinPayload,
     ): Promise<Checkin> {
         return this.request<Checkin>(`/v1/checkins/${checkinId}`, {
             method: "PATCH",

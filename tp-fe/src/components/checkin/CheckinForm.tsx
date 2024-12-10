@@ -114,7 +114,7 @@ export const CheckinForm: React.FC<CheckinFormProps> = ({
             onError(
                 error instanceof Error
                     ? error.message
-                    : "Failed to create checkin"
+                    : "Failed to create checkin",
             );
         }
     };

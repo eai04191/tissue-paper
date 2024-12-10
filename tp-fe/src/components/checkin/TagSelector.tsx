@@ -33,15 +33,15 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                 const recentCheckins = await api.getUserCheckins(
                     user.name,
                     1,
-                    20
+                    20,
                 );
                 const recentTagSet = new Set(
-                    recentCheckins.flatMap((checkin) => checkin.tags || [])
+                    recentCheckins.flatMap((checkin) => checkin.tags || []),
                 );
 
                 // 両方のタグをマージして重複を排除
                 const allTags = Array.from(
-                    new Set([...statsTagSet, ...recentTagSet])
+                    new Set([...statsTagSet, ...recentTagSet]),
                 ).sort((a, b) => a.localeCompare(b, "ja")); // 日本語対応のソート
 
                 setRecentTags(allTags);

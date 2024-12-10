@@ -28,7 +28,7 @@ export const LazyLinkCard: React.FC<LazyLinkCardProps> = ({ url, token }) => {
             {
                 rootMargin: "100px",
                 threshold: 0,
-            }
+            },
         );
 
         if (containerRef.current) {

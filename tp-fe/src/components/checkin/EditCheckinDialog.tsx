@@ -74,7 +74,7 @@ export const EditCheckinDialog: React.FC<EditCheckinDialogProps> = ({
             onError(
                 error instanceof Error
                     ? error.message
-                    : "Failed to update checkin"
+                    : "Failed to update checkin",
             );
         }
     };
