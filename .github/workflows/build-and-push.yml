@@ -9,6 +9,7 @@ env:
   REGISTRY: ghcr.io
   FE_IMAGE_NAME: ${{ github.repository }}-frontend
   BE_IMAGE_NAME: ${{ github.repository }}-backend
+  VITE_API_BASE_URL: "/api"
 
 jobs:
   build-and-push:
@@ -32,6 +33,8 @@ jobs:
         with:
           context: ./tp-fe
           push: true
+          build-args: |
+            VITE_API_BASE_URL=${{ env.VITE_API_BASE_URL }}
           tags: |
             ${{ env.REGISTRY }}/${{ env.FE_IMAGE_NAME }}:latest
             ${{ env.REGISTRY }}/${{ env.FE_IMAGE_NAME }}:${{ github.sha }}
