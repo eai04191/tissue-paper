@@ -6,6 +6,7 @@ import type { createApiClient } from "@/api/client";
 import { ActionMenu } from "@/components/shared/ActionMenu";
 import { ConfirmDialog } from "@/components/shared/ConfirmDialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkin } from "@/types";
 
@@ -70,15 +71,19 @@ export const CheckinCard: React.FC<CheckinCardProps> = ({
                             )}
                         </span>
                         <div className="flex items-center gap-2">
-                            <a
-                                href={`https://shikorism.net/checkin/${checkin.id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-gray-600"
-                                title="Permalink"
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-gray-400 hover:text-gray-600"
+                                title="Open Permalink"
                             >
-                                <Link size={16} />
-                            </a>
+                                <a
+                                    href={`https://shikorism.net/checkin/${checkin.id}`}
+                                    target="_blank"
+                                >
+                                    <Link size={16} />
+                                </a>
+                            </Button>
                             <ActionMenu items={menuItems} />
                         </div>
                     </div>
