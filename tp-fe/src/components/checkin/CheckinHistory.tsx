@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import type { createApiClient } from "@/api/client";
 import { Skeleton } from "@/components/ui/skeleton";

@@ -1,5 +1,5 @@
 import confetti from "canvas-confetti";
-import React, { useEffect, useRef,useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import type { createApiClient } from "@/api/client";
 import { Button } from "@/components/ui/button";
