@@ -1,26 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { createApiClient } from "../api/client";
-import { TagStats } from "../types";
+import { createApiClient } from "../../api/client";
 
-interface TagSelectorProps {
+interface CheckinFormTagsProps {
     token: string;
     selectedTags: string[];
+    suggestedTags: string[];
     onAddTag: (tag: string) => void;
     onRemoveTag: (tag: string) => void;
 }
 
-export const TagSelector: React.FC<TagSelectorProps> = ({
+export const CheckinFormTags: React.FC<CheckinFormTagsProps> = ({
     token,
     selectedTags,
+    suggestedTags,
     onAddTag,
     onRemoveTag,
 }) => {
-    const [recentTags, setRecentTags] = useState<string[]>([]);
     const [newTag, setNewTag] = useState("");
+    const [recentTags, setRecentTags] = useState<string[]>([]);
     const api = createApiClient(token);
 
+    // 直近使用したタグを取得
     useEffect(() => {
         const fetchTags = async () => {
             try {
@@ -54,20 +56,23 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         fetchTags();
     }, [token]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (newTag.trim() && !selectedTags.includes(newTag.trim())) {
-            onAddTag(newTag.trim());
-            setNewTag("");
-        }
-    };
-
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "Enter") {
             e.preventDefault();
-            handleSubmit(e);
+            if (newTag.trim() && !selectedTags.includes(newTag.trim())) {
+                onAddTag(newTag.trim());
+                setNewTag("");
+            }
         }
     };
+
+    // 選択済みのタグを除外したサジェストタグとRecentタグ
+    const unusedSuggestedTags = suggestedTags.filter(
+        (tag) => !selectedTags.includes(tag)
+    );
+    const unusedRecentTags = recentTags.filter(
+        (tag) => !selectedTags.includes(tag)
+    );
 
     return (
         <div className="space-y-4">
@@ -84,29 +89,49 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
                 ))}
             </div>
 
-            <form onSubmit={handleSubmit} className="flex gap-2">
-                <Input
-                    type="text"
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Add new tag... (press Enter to add)"
-                    className="flex-1"
-                />
-            </form>
+            <Input
+                type="text"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Add new tag... (press Enter to add)"
+                className="flex-1"
+            />
 
-            {recentTags.length > 0 && (
+            {unusedRecentTags.length > 0 && (
                 <div>
-                    <h3 className="text-sm font-medium mb-2">Recent Tags</h3>
+                    <label className="block text-sm font-medium mb-2">
+                        Recent Tags
+                    </label>
                     <div className="flex flex-wrap gap-2">
-                        {recentTags.map((tag) => (
+                        {unusedRecentTags.map((tag) => (
                             <Badge
                                 key={tag}
                                 variant="secondary"
-                                className="cursor-pointer hover:bg-gray-200"
+                                className="cursor-pointer hover:bg-gray-100"
                                 onClick={() => onAddTag(tag)}
                             >
                                 {tag}
+                            </Badge>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {unusedSuggestedTags.length > 0 && (
+                <div>
+                    <label className="block text-sm font-medium mb-2 text-gray-600">
+                        Suggested Tags from URL
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                        {unusedSuggestedTags.map((tag) => (
+                            <Badge
+                                key={tag}
+                                variant="outline"
+                                className="cursor-pointer hover:bg-gray-100 text-gray-600"
+                                onClick={() => onAddTag(tag)}
+                            >
+                                + {tag}
                             </Badge>
                         ))}
                     </div>

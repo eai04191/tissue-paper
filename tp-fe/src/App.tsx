@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocalStorage } from "./hooks/useLocalStorage";
-import { CheckinForm } from "./components/CheckinForm";
-import { CheckinHistory } from "./components/CheckinHistory";
+import { CheckinForm } from "./components/checkin/CheckinForm";
+import { CheckinHistory } from "./components/checkin/CheckinHistory";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,7 +23,7 @@ const App: React.FC = () => {
                     <h1 className="text-2xl font-bold mb-4">Login to Tissue</h1>
                     <div className="space-y-4">
                         <Input
-                            type="text"
+                            type="password"
                             placeholder="Enter your access token"
                             onChange={(e) => setToken(e.target.value)}
                         />
@@ -59,17 +59,19 @@ const App: React.FC = () => {
                     </Alert>
                 )}
 
-                <CheckinForm
-                    token={token}
-                    onError={setError}
-                    onSuccess={handleCheckinSuccess}
-                />
+                <div className="space-y-8">
+                    <CheckinForm
+                        token={token}
+                        onError={setError}
+                        onSuccess={handleCheckinSuccess}
+                    />
 
-                <CheckinHistory
-                    token={token}
-                    onError={setError}
-                    refreshTrigger={refreshTrigger}
-                />
+                    <CheckinHistory
+                        token={token}
+                        onError={setError}
+                        refreshTrigger={refreshTrigger}
+                    />
+                </div>
             </div>
         </div>
     );

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { LinkCard } from "./LinkCard";
-import { createApiClient } from "../api/client";
-import { LinkCard as LinkCardType } from "../types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LinkCard } from "./LinkCard";
+import { createApiClient } from "../../api/client";
+import { LinkCard as LinkCardType } from "../../types";
 
 interface LazyLinkCardProps {
     url: string;
@@ -21,12 +21,12 @@ export const LazyLinkCard: React.FC<LazyLinkCardProps> = ({ url, token }) => {
             (entries) => {
                 const [entry] = entries;
                 if (entry.isIntersecting && !fetchedRef.current) {
-                    fetchedRef.current = true; // フェッチを1回だけ行うためのフラグ
+                    fetchedRef.current = true;
                     fetchCard();
                 }
             },
             {
-                rootMargin: "100px", // 表示される100px手前で開始
+                rootMargin: "100px",
                 threshold: 0,
             }
         );

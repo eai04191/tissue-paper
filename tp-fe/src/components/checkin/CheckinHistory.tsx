@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { createApiClient } from "../api/client";
-import { Checkin } from "../types";
+import { createApiClient } from "../../api/client";
+import { Checkin } from "../../types";
 import { CheckinCard } from "./CheckinCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -43,10 +43,10 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
 
     if (loading) {
         return (
-            <div className="space-y-4 mt-8">
+            <div className="space-y-4">
                 <h2 className="text-xl font-bold">Recent Checkins</h2>
                 {[1, 2, 3].map((i) => (
-                    <div key={i} className="space-y-4">
+                    <div key={i}>
                         <Skeleton className="h-48 w-full" />
                     </div>
                 ))}
@@ -63,7 +63,7 @@ export const CheckinHistory: React.FC<CheckinHistoryProps> = ({
     }
 
     return (
-        <div className="space-y-4 mt-8">
+        <div className="space-y-4">
             <h2 className="text-xl font-bold">Recent Checkins</h2>
             {checkins.map((checkin) => (
                 <CheckinCard
